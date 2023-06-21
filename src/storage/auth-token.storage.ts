@@ -10,9 +10,12 @@ export async function storageAuthTokenSave({accessToken}: StorageAuthTokenProps)
 }
 
 export async function storageAuthTokenGet(): Promise<StorageAuthTokenProps> {
+  console.log('storageAuthTokenGet');
   const response = await AsyncStorage.getItem(AUTH_STORAGE);
+  console.log('storageAuthTokenGet 2');
 
   const { accessToken }: StorageAuthTokenProps = response ? JSON.parse(response) : {}
+  console.log('storageAuthTokenGet 3');
 
   return { accessToken };
 }

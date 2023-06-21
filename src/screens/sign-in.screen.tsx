@@ -17,10 +17,10 @@ type FormData = {
 export function SignInScreen() {
   const [isLoading, setIsLoading] = useState(false)
   const { signIn } = useAuth();
-  const navigation = useNavigation<AuthNavigatorRoutesProps>();
   const toast = useToast();
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>()
 
+  const navigation = useNavigation<AuthNavigatorRoutesProps>();
   function handleNewAccount() {
     navigation.navigate('signUp');
   }

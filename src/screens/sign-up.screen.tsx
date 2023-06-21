@@ -44,13 +44,11 @@ export function SignUpScreen() {
   async function handleSignUp({ name, email, password }: FormDataProps) {
     try {
       setIsLoading(true)
-      console.log('1')
       await signUp({
         email,
         password,
         name,
       })
-      console.log('ultimo')
     } catch (error) {
       setIsLoading(false);
 
@@ -122,7 +120,7 @@ export function SignUpScreen() {
             )}
           />
 
-<Controller
+          <Controller
             control={control}
             name="password_confirm"
             rules={{ required: 'Informe a confirmação da senha' }}
