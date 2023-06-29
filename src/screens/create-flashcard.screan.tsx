@@ -122,7 +122,9 @@ export function CreateFlashcardScreen() {
             )}
           />
 
-
+        <Text color="gray.100" textTransform='uppercase' fontSize="lg" marginBottom='10' fontFamily="body">
+          Está é a resposta correta
+        </Text>
         <Controller
             control={control}
             name="responses_text_1"

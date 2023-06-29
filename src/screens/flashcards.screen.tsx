@@ -8,6 +8,7 @@ import { AppError } from '@utils/app.error';
 import { Button, Center, FlatList, HStack, Heading, Text, Icon, VStack, useToast, Box } from 'native-base';
 import { useState, useCallback, Fragment } from 'react';
 import { AntDesign } from '@expo/vector-icons';
+import { ButtonComponent } from '@components/button.component';
 type RouteParamsProps = {
   collectionId: string;
 }
@@ -34,16 +35,57 @@ export function FlashcardsScreen() {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const { collectionId } = route.params as RouteParamsProps;
+  console.log({collectionId})
   function handleCreateFlashcard() {
     navigation.navigate('createFlashcard', { collectionId });
   }
 
   function handleGoBack() {
+    setFlashcards([]);
     navigation.navigate('library');
+  }
+
+  async function handleCreateDeck() {
+    try {
+      console.log({collectionId})
+      const {accessToken} = await storageAuthTokenGet();
+      const response = await api({
+        method: 'post',
+        url: '/flashcards/build',
+        headers: {
+          "Authorization": `${accessToken}`
+        },
+        data: {
+          collection: {
+            id: collectionId
+          }
+        }
+      });
+
+      toast.show({
+        title: 'Deck criado com sucesso!',
+        placement: 'top',
+        bgColor: 'green.500'
+      });
+
+    } catch (error: any) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError ? error.message : 'Não foi possível carregar os flashcards';
+      console.log(error);
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500'
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   async function fetchFlashcards() {
     try {
+      console.log({collectionId})
       setIsLoading(true);
       const {accessToken} = await storageAuthTokenGet();
       const response = await api({
@@ -51,7 +93,7 @@ export function FlashcardsScreen() {
         url: '/flashcards/list',
         headers: {
           "Authorization": `${accessToken}`,
-          "collectionId": `${collectionId}`
+          "collection_id": `${collectionId}`
         }
       });
       console.log(response.data);
@@ -102,6 +144,10 @@ export function FlashcardsScreen() {
             </Button>
           </HStack>
       {  isLoading ? <LoadingComponent /> :
+        flashcards.length === 0 ? <Text color='white' textAlign='center'>Nenhum flashcard criado</Text>
+       :
+       <VStack>
+        <ButtonComponent title='Construir deck' mt='5' mb='10' onPress={handleCreateDeck}/>
         <FlatList
             data={flashcards}
             keyExtractor={item => item.id}
@@ -114,7 +160,8 @@ export function FlashcardsScreen() {
             _contentContainerStyle={{
               paddingBottom: 20
             }}
-          />
+            />
+        </VStack>
 }
     </VStack>
   );
